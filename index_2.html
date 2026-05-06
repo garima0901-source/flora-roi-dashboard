@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FLORA Creative ROI Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fafafa;color:#111;min-height:100vh}
+.page{max-width:860px;margin:0 auto;padding:2rem 1.5rem 4rem}
+.hero{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem;flex-wrap:wrap;gap:12px}
+.hero-left h1{font-size:22px;font-weight:600;color:#111;letter-spacing:-0.4px}
+.hero-left p{font-size:14px;color:#6b7280;margin-top:5px}
+.badge{display:inline-block;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;background:#ede9fe;color:#4c1d95;margin-top:8px}
+.flora-logo{font-size:15px;font-weight:600;color:#7c3aed;letter-spacing:0.5px;padding:8px 0}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.75rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.75rem}
+.metric{background:#f3f4f6;border-radius:10px;padding:14px 16px}
+.metric .lbl{font-size:11px;color:#6b7280;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.metric .val{font-size:23px;font-weight:600;color:#111;line-height:1}
+.metric .sub{font-size:11px;color:#9ca3af;margin-top:4px}
+.metric .delta{font-size:12px;font-weight:500;color:#059669;margin-top:5px}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:1.25rem}
+.card h3{font-size:14px;font-weight:600;color:#111;margin-bottom:1rem}
+.slider-row{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+.slider-row label{font-size:13px;color:#6b7280;width:175px;flex-shrink:0}
+.slider-row input[type=range]{flex:1;accent-color:#7c3aed;cursor:pointer}
+.slider-row .val{font-size:13px;font-weight:500;color:#111;min-width:52px;text-align:right}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.bar-row .bar-label{font-size:12px;color:#6b7280;width:120px;flex-shrink:0;text-align:right}
+.bar-track{flex:1;height:9px;background:#f3f4f6;border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width 0.4s ease}
+.bar-row .bar-val{font-size:12px;font-weight:500;color:#111;min-width:36px}
+.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.tool-item{background:#f9fafb;border-radius:8px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center}
+.tool-item .tname{font-size:12px;color:#6b7280}
+.tool-item .tval{font-size:13px;font-weight:500;color:#111}
+.timeline{position:relative;padding-left:22px}
+.timeline::before{content:'';position:absolute;left:6px;top:6px;bottom:6px;width:1px;background:#e5e7eb}
+.t-item{position:relative;margin-bottom:15px}
+.t-item::before{content:'';position:absolute;left:-17px;top:5px;width:8px;height:8px;border-radius:50%;background:#7c3aed}
+.t-item .t-week{font-size:11px;color:#9ca3af;margin-bottom:2px;font-weight:500}
+.t-item .t-text{font-size:13px;color:#374151;line-height:1.5}
+.tab-row{display:flex;gap:4px;margin-bottom:1.25rem;flex-wrap:wrap}
+.tab{font-size:13px;padding:6px 15px;border-radius:20px;border:1px solid transparent;cursor:pointer;color:#6b7280;background:transparent;transition:all 0.15s;font-family:inherit}
+.tab.active{background:#ede9fe;color:#4c1d95;font-weight:500}
+.tab:hover:not(.active){background:#f3f4f6}
+.funnel-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.f-label{font-size:12px;color:#6b7280;width:160px;flex-shrink:0}
+.f-track{flex:1;height:30px;background:#f3f4f6;border-radius:5px;overflow:hidden}
+.f-fill{height:100%;border-radius:5px;display:flex;align-items:center;padding-left:10px;font-size:12px;font-weight:500;color:#fff;transition:width 0.5s ease}
+.f-val{font-size:12px;color:#9ca3af;min-width:36px}
+.segment-row{display:flex;gap:3px;height:22px;border-radius:5px;overflow:hidden;margin-bottom:10px}
+.seg-item{height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:4px}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#6b7280}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.section-label{font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px}
+.divider{height:1px;background:#f3f4f6;margin:1rem 0}
+.cta-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:#f5f3ff;border-radius:12px;border:1px solid #ddd6fe;margin-top:1.75rem;flex-wrap:wrap;gap:12px}
+.cta-bar-text p:first-child{font-size:15px;font-weight:600;color:#111}
+.cta-bar-text p:last-child{font-size:13px;color:#6b7280;margin-top:3px}
+.cta-btn{font-size:13px;font-weight:600;padding:9px 20px;border-radius:8px;background:#7c3aed;color:#fff;border:none;cursor:pointer;white-space:nowrap;transition:background 0.15s}
+.cta-btn:hover{background:#6d28d9}
+.ops-row{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid #f3f4f6}
+.ops-row:last-child{border-bottom:none}
+.share-btn{font-size:13px;padding:8px 16px;border-radius:8px;border:1px solid #e5e7eb;background:#fff;color:#374151;cursor:pointer;font-family:inherit;transition:background 0.15s}
+.share-btn:hover{background:#f9fafb}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+@media(max-width:600px){
+  .grid4{grid-template-columns:1fr 1fr}
+  .grid2{grid-template-columns:1fr}
+  .hero{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hero">
+  <div class="hero-left">
+    <div class="flora-logo">FLORA</div>
+    <h1>Creative ROI dashboard</h1>
+    <p>Estimate the real impact for your team — adjust inputs to see live results</p>
+    <span class="badge">Built for FLORA's GTM team · by Garima</span>
+  </div>
+  <button class="share-btn" onclick="copyLink()">Copy report link</button>
+</div>
+
+<div class="grid4" id="metrics"></div>
+
+<div class="tab-row">
+  <button class="tab active" onclick="switchTab('inputs',this)">Configure your team</button>
+  <button class="tab" onclick="switchTab('breakdown',this)">Cost breakdown</button>
+  <button class="tab" onclick="switchTab('adoption',this)">Adoption funnel</button>
+  <button class="tab" onclick="switchTab('roadmap',this)">GTM roadmap</button>
+</div>
+
+<div id="tab-inputs" class="tab-panel active">
+<div class="grid2">
+  <div class="card">
+    <h3>Team profile</h3>
+    <div class="slider-row">
+      <label>Team size (designers)</label>
+      <input type="range" min="1" max="50" step="1" id="teamSize" value="8" oninput="recalc()">
+      <span class="val" id="teamSizeV">8</span>
+    </div>
+    <div class="slider-row">
+      <label>Avg. hourly rate ($)</label>
+      <input type="range" min="30" max="200" step="5" id="hourRate" value="85" oninput="recalc()">
+      <span class="val" id="hourRateV">$85</span>
+    </div>
+    <div class="slider-row">
+      <label>Creative hours / week</label>
+      <input type="range" min="10" max="40" step="1" id="hoursWeek" value="30" oninput="recalc()">
+      <span class="val" id="hoursWeekV">30h</span>
+    </div>
+    <div class="slider-row">
+      <label>% time on repetitive tasks</label>
+      <input type="range" min="10" max="70" step="5" id="repPct" value="40" oninput="recalc()">
+      <span class="val" id="repPctV">40%</span>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Current toolstack cost / month</h3>
+    <div id="toolstack"></div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid #f3f4f6;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:13px;color:#6b7280">Total toolstack / month</span>
+      <span style="font-size:16px;font-weight:600;color:#ef4444" id="toolTotal"></span>
+    </div>
+    <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:13px;color:#6b7280">FLORA equivalent / month</span>
+      <span style="font-size:16px;font-weight:600;color:#059669" id="floraTotal"></span>
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="tab-breakdown" class="tab-panel">
+<div class="card">
+  <h3>Where time goes — before vs. after FLORA</h3>
+  <div style="margin-bottom:1.25rem">
+    <div class="section-label">Before FLORA</div>
+    <div id="before-bars"></div>
+  </div>
+  <div>
+    <div class="section-label">After FLORA</div>
+    <div id="after-bars"></div>
+  </div>
+</div>
+</div>
+
+<div id="tab-adoption" class="tab-panel">
+<div class="card">
+  <h3>Creative team adoption funnel</h3>
+  <div id="funnel-bars"></div>
+  <div class="divider"></div>
+  <h3 style="margin-bottom:10px">ICP segment mix</h3>
+  <div class="segment-row" id="seg-row"></div>
+  <div class="legend" id="seg-legend"></div>
+</div>
+</div>
+
+<div id="tab-roadmap" class="tab-panel">
+<div class="grid2">
+  <div class="card">
+    <h3>GTM launch roadmap</h3>
+    <div class="timeline" id="roadmap-items"></div>
+  </div>
+  <div class="card">
+    <h3>AI-native ops stack</h3>
+    <p style="font-size:13px;color:#6b7280;margin-bottom:14px">How this role runs on automation-first principles</p>
+    <div id="ops-stack"></div>
+  </div>
+</div>
+</div>
+
+<div class="cta-bar">
+  <div class="cta-bar-text">
+    <p>Ready to see this for your team?</p>
+    <p>FLORA replaces 3–5 tools and 2x creative throughput in 30 days</p>
+  </div>
+  <button class="cta-btn" onclick="window.open('https://flora.ai','_blank')">Try FLORA free →</button>
+</div>
+
+</div>
+<script>
+const tools=[{name:'Midjourney',base:30},{name:'Runway / Kling',base:35},{name:'ChatGPT Pro',base:20},{name:'Adobe CC',base:55},{name:'Frame.io',base:15}];
+const floraPerSeat=16;
+const roadmap=[
+  {week:'Week 1–2',text:'Audit ICP: agencies, in-house studios, universities — build tiered contact list'},
+  {week:'Week 3–4',text:'Launch Creative Partner Program v1: 5 pilot studios, structured onboarding'},
+  {week:'Week 5–6',text:'Community activation: Discord launch, weekly "workflow of the week" series'},
+  {week:'Week 7–8',text:'Startup partnership pilot: identify 3 AI-native startups for co-marketing'},
+  {week:'Week 9–10',text:'ROI reporting loop: collect data from pilots, publish case study #1'},
+  {week:'Week 11–12',text:'Scale: expand partner program to 25 studios, launch referral mechanic'},
+];
+const opsStack=[
+  {tool:'Clay + n8n',use:'ICP enrichment & outreach automation'},
+  {tool:'Claude API',use:'Personalised outreach at scale'},
+  {tool:'Notion + Airtable',use:'Partner pipeline & community CRM'},
+  {tool:'Zapier',use:'Trigger-based partner onboarding flows'},
+  {tool:'Perplexity',use:'Real-time competitive & market intel'},
+];
+const segments=[
+  {label:'Design agencies',pct:38,color:'#7c3aed'},
+  {label:'In-house teams',pct:27,color:'#0d9488'},
+  {label:'Freelancers',pct:20,color:'#d97706'},
+  {label:'Universities',pct:15,color:'#db2777'},
+];
+const funnel=[
+  {label:'ICP accounts identified',val:1000,color:'#7c3aed'},
+  {label:'Outreach sent',val:600,color:'#5b21b6'},
+  {label:'Demo / trial started',val:180,color:'#4c1d95'},
+  {label:'Partner activated',val:54,color:'#2e1065'},
+];
+
+function fmt$(n){return '$'+Math.round(n).toLocaleString();}
+function fmtK(n){return n>=1000?'$'+(n/1000).toFixed(1)+'K':fmt$(n);}
+
+function recalc(){
+  const ts=+document.getElementById('teamSize').value;
+  const hr=+document.getElementById('hourRate').value;
+  const hw=+document.getElementById('hoursWeek').value;
+  const rp=+document.getElementById('repPct').value/100;
+  document.getElementById('teamSizeV').textContent=ts;
+  document.getElementById('hourRateV').textContent='$'+hr;
+  document.getElementById('hoursWeekV').textContent=hw+'h';
+  document.getElementById('repPctV').textContent=Math.round(rp*100)+'%';
+  const savedHours=Math.round(ts*hw*rp*0.55);
+  const annualSaving=Math.round(savedHours*hr*52);
+  const outputMult=(+(1+rp*1.6).toFixed(1));
+  const toolCost=tools.reduce((s,t)=>s+t.base,0)*ts;
+  const floraCost=ts*floraPerSeat;
+  const toolSaving=Math.max(0,toolCost-floraCost);
+  document.getElementById('metrics').innerHTML=`
+    <div class="metric"><div class="lbl">Hours saved / week</div><div class="val">${savedHours}h</div><div class="sub">across ${ts} designers</div><div class="delta">+${Math.round(0.55*100)}% efficiency</div></div>
+    <div class="metric"><div class="lbl">Annual labour saving</div><div class="val">${fmtK(annualSaving)}</div><div class="sub">at $${hr}/hr</div><div class="delta">ROI in &lt;30 days</div></div>
+    <div class="metric"><div class="lbl">Output multiplier</div><div class="val">${outputMult}x</div><div class="sub">creative throughput</div><div class="delta">vs. current workflow</div></div>
+    <div class="metric"><div class="lbl">Toolstack saving</div><div class="val">${fmtK(toolSaving)}</div><div class="sub">vs. fragmented stack</div><div class="delta">${ts} seats @ $${floraPerSeat}/mo</div></div>
+  `;
+  document.getElementById('toolstack').innerHTML='<div class="tool-grid">'+tools.map(t=>`<div class="tool-item"><span class="tname">${t.name}</span><span class="tval">${fmt$(t.base*ts)}/mo</span></div>`).join('')+'</div>';
+  document.getElementById('toolTotal').textContent=fmt$(toolCost)+'/mo';
+  document.getElementById('floraTotal').textContent=fmt$(floraCost)+'/mo';
+  const beforeData=[{label:'Admin & file mgmt',pct:25,color:'#d1d5db'},{label:'Tool switching',pct:Math.round(rp*100),color:'#fca5a5'},{label:'Creative work',pct:Math.max(10,Math.round(75-rp*100)),color:'#a5f3d3'}];
+  const afterData=[{label:'Admin & file mgmt',pct:8,color:'#d1d5db'},{label:'Tool switching',pct:5,color:'#fca5a5'},{label:'Creative work',pct:87,color:'#7c3aed'}];
+  document.getElementById('before-bars').innerHTML=renderBars(beforeData);
+  document.getElementById('after-bars').innerHTML=renderBars(afterData);
+}
+
+function renderBars(data){
+  return data.map(d=>`<div class="bar-row"><span class="bar-label">${d.label}</span><div class="bar-track"><div class="bar-fill" style="width:${d.pct}%;background:${d.color}"></div></div><span class="bar-val">${d.pct}%</span></div>`).join('');
+}
+
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function copyLink(){
+  navigator.clipboard.writeText(window.location.href).then(()=>{
+    const btn=document.querySelector('.share-btn');
+    btn.textContent='Copied!';
+    setTimeout(()=>btn.textContent='Copy report link',2000);
+  });
+}
+
+document.getElementById('funnel-bars').innerHTML=funnel.map(f=>`<div class="funnel-row"><span class="f-label">${f.label}</span><div class="f-track"><div class="f-fill" style="width:${Math.round(f.val/funnel[0].val*100)}%;background:${f.color}">${f.val.toLocaleString()}</div></div><span class="f-val">${Math.round(f.val/funnel[0].val*100)}%</span></div>`).join('');
+document.getElementById('seg-row').innerHTML=segments.map(s=>`<div class="seg-item" style="flex:${s.pct};background:${s.color}"></div>`).join('');
+document.getElementById('seg-legend').innerHTML=segments.map(s=>`<div class="leg-item"><div class="leg-dot" style="background:${s.color}"></div>${s.label} ${s.pct}%</div>`).join('');
+document.getElementById('roadmap-items').innerHTML=roadmap.map(r=>`<div class="t-item"><div class="t-week">${r.week}</div><div class="t-text">${r.text}</div></div>`).join('');
+document.getElementById('ops-stack').innerHTML=opsStack.map(o=>`<div class="ops-row"><span style="font-size:12px;font-weight:600;color:#111;min-width:120px">${o.tool}</span><span style="font-size:12px;color:#6b7280;text-align:right">${o.use}</span></div>`).join('');
+recalc();
+</script>
+</body>
+</html>
